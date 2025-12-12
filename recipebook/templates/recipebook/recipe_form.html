@@ -1,0 +1,95 @@
+{% extends "recipebook/base.html" %}
+{% block title %}{% if object %}Edit{% else %}New{% endif %} Recipe · RecipeBook{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">{% if object %}Edit{% else %}New{% endif %} Recipe</h1>
+
+<form method="post" novalidate>
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %}
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Name</label>
+          {{ form.name }}
+          {{ form.name.errors }}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Cuisine</label>
+          {{ form.cuisine }}
+          {{ form.cuisine.errors }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Minutes</label>
+          {{ form.minutes }}
+          {{ form.minutes.errors }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Difficulty</label>
+          {{ form.difficulty }}
+          {{ form.difficulty.errors }}
+        </div>
+        <div class="col-12">
+          <label class="form-label">Notes</label>
+          {{ form.notes }}
+          {{ form.notes.errors }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="h5">Ingredients</h2>
+
+  {{ formset.management_form }}
+  {% if formset.non_form_errors %}
+    <div class="alert alert-danger">{{ formset.non_form_errors }}</div>
+  {% endif %}
+
+  <div id="formset-rows">
+    {% for fs in formset.forms %}
+      <div class="formset-row row g-2 align-items-end">
+        {% if fs.non_field_errors %}
+          <div class="col-12 text-danger">{{ fs.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="col-md-5">
+          <label class="form-label">Ingredient</label>
+          {{ fs.ingredient }} {{ fs.ingredient.errors }}
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Qty</label>
+          {{ fs.quantity }} {{ fs.quantity.errors }}
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Unit</label>
+          {{ fs.unit }} {{ fs.unit.errors }}
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Prep</label>
+          {{ fs.preparation }} {{ fs.preparation.errors }}
+        </div>
+        <div class="col-md-1">
+          {% if fs.instance.pk %}
+            <div class="form-check">
+              {{ fs.DELETE }} <label class="form-check-label">Delete</label>
+            </div>
+          {% endif %}
+        </div>
+
+        {% for hidden in fs.hidden_fields %}{{ hidden }}{% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="d-flex gap-2">
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn btn-secondary" href="{% url 'recipe_list' %}">Cancel</a>
+  </div>
+</form>
+{% endblock %}
+

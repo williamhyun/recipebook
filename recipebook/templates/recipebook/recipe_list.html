@@ -1,0 +1,68 @@
+{% extends "recipebook/base.html" %}
+{% block title %}Recipes · RecipeBook{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 m-0">Recipes</h1>
+  <a class="btn btn-primary" href="{% url 'recipe_create' %}">+ New Recipe</a>
+</div>
+
+<form class="row g-2 mb-3" method="get">
+  <div class="col-auto">
+    <input class="form-control" type="search" name="q" placeholder="Search by name or notes..." value="{{ request.GET.q }}">
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-outline-secondary" type="submit">Search</button>
+    <a class="btn btn-outline-dark" href="{% url 'recipe_list' %}">Reset</a>
+  </div>
+</form>
+
+{% if recipes %}
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Cuisine</th>
+          <th>Minutes</th>
+          <th>Difficulty</th>
+          <th style="width:200px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for r in recipes %}
+        <tr>
+          <td><a href="{% url 'recipe_detail' r.pk %}">{{ r.name }}</a></td>
+          <td>{{ r.cuisine.name }}</td>
+          <td>{{ r.minutes }}</td>
+          <td class="text-capitalize">{{ r.get_difficulty_display }}</td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-secondary" href="{% url 'recipe_detail' r.pk %}">View</a>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'recipe_edit' r.pk %}">Edit</a>
+            <a class="btn btn-sm btn-outline-danger" href="{% url 'recipe_delete' r.pk %}">Delete</a>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+  <nav>
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Previous</a></li>
+      {% endif %}
+      <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+      {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Next</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+
+{% else %}
+  <div class="alert alert-info">No recipes yet. Be the first to <a href="{% url 'recipe_create' %}">add one</a>!</div>
+{% endif %}
+{% endblock %}
+

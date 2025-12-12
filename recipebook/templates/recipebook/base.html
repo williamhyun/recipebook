@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}RecipeBook{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Quick styling via Bootstrap CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    main { padding-top: 1rem; padding-bottom: 2rem; }
+    .formset-row { border-bottom: 1px dashed #ddd; padding-bottom: .5rem; margin-bottom: .5rem; }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'recipe_list' %}">RecipeBook</a>
+    <div class="navbar-nav">
+      <a class="nav-link" href="{% url 'recipe_list' %}">Recipes</a>
+      <a class="nav-link" href="{% url 'recipe_create' %}">Add Recipe</a>
+      <a class="nav-link" href="{% url 'report' %}">Reports</a>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+  {% block content %}{% endblock %}
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
+

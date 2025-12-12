@@ -1,0 +1,116 @@
+{% extends "recipebook/base.html" %}
+{% block title %}Reports · RecipeBook{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">Reports</h1>
+
+<form class="row gy-2 gx-3 align-items-end mb-3" method="get">
+  <div class="col-md-4">
+    <label class="form-label">Cuisine</label>
+    <select name="cuisine" class="form-select">
+      <option value="">All</option>
+      {% for c in cuisines %}
+        <option value="{{ c.id }}" {% if selected.cuisine == c.id %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Max minutes</label>
+    <input type="number" min="1" class="form-control" name="max_minutes" value="{{ selected.max_minutes }}">
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Difficulty</label>
+    <select name="difficulty" class="form-select">
+      <option value="">All</option>
+      <option value="easy"   {% if selected.difficulty == "easy" %}selected{% endif %}>Easy</option>
+      <option value="medium" {% if selected.difficulty == "medium" %}selected{% endif %}>Medium</option>
+      <option value="hard"   {% if selected.difficulty == "hard" %}selected{% endif %}>Hard</option>
+    </select>
+  </div>
+
+  <div class="col-12">
+    <button class="btn btn-primary" type="submit">Apply Filters</button>
+    <a class="btn btn-outline-dark" href="{% url 'report' %}">Reset</a>
+  </div>
+</form>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Average Minutes per Cuisine (filtered)</div>
+      <div class="card-body">
+        {% if avg_minutes_per_cuisine %}
+          <ul class="list-group list-group-flush">
+          {% for row in avg_minutes_per_cuisine %}
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{{ row.cuisine__name }}</span>
+              <strong>{{ row.avg_minutes|floatformat:1 }}</strong>
+            </li>
+          {% endfor %}
+          </ul>
+        {% else %}
+          <div class="text-muted">No data.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Recipe Count by Difficulty (filtered)</div>
+      <div class="card-body">
+        {% if recipe_count_by_difficulty %}
+          <ul class="list-group list-group-flush">
+          {% for row in recipe_count_by_difficulty %}
+            <li class="list-group-item d-flex justify-content-between">
+              <span class="text-capitalize">{{ row.difficulty }}</span>
+              <strong>{{ row.count }}</strong>
+            </li>
+          {% endfor %}
+          </ul>
+        {% else %}
+          <div class="text-muted">No data.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 class="h5">Recipes (filtered)</h2>
+{% if recipes %}
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Cuisine</th>
+          <th>Minutes</th>
+          <th>Difficulty</th>
+          <th>Ingredient Count</th>
+          <th style="width:140px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for r in recipes %}
+        <tr>
+          <td><a href="{% url 'recipe_detail' r.pk %}">{{ r.name }}</a></td>
+          <td>{{ r.cuisine.name }}</td>
+          <td>{{ r.minutes }}</td>
+          <td class="text-capitalize">{{ r.get_difficulty_display }}</td>
+          <td>{{ r.ingredient_count }}</td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'recipe_edit' r.pk %}">Edit</a>
+            <a class="btn btn-sm btn-outline-danger" href="{% url 'recipe_delete' r.pk %}">Delete</a>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="alert alert-info">No recipes match the filters.</div>
+{% endif %}
+{% endblock %}
+

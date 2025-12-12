@@ -1,0 +1,35 @@
+{% extends "recipebook/base.html" %}
+{% block title %}{{ recipe.name }} · RecipeBook{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 m-0">{{ recipe.name }}</h1>
+  <div>
+    <a class="btn btn-outline-primary" href="{% url 'recipe_edit' recipe.pk %}">Edit</a>
+    <a class="btn btn-outline-danger" href="{% url 'recipe_delete' recipe.pk %}">Delete</a>
+  </div>
+</div>
+
+<ul class="list-group mb-3">
+  <li class="list-group-item"><strong>Cuisine:</strong> {{ recipe.cuisine.name }}</li>
+  <li class="list-group-item"><strong>Minutes:</strong> {{ recipe.minutes }}</li>
+  <li class="list-group-item"><strong>Difficulty:</strong> {{ recipe.get_difficulty_display }}</li>
+  {% if recipe.notes %}
+  <li class="list-group-item"><strong>Notes:</strong><br>{{ recipe.notes|linebreaksbr }}</li>
+  {% endif %}
+</ul>
+
+<h2 class="h5">Ingredients</h2>
+<ul class="list-group">
+  {% for ri in recipe.recipe_ingredients.all %}
+    <li class="list-group-item">
+      {{ ri.ingredient.name }}
+      {% if ri.quantity %} — {{ ri.quantity }}{% if ri.unit %} {{ ri.get_unit_display }}{% endif %}{% endif %}
+      {% if ri.preparation %}<em> ({{ ri.preparation }})</em>{% endif %}
+    </li>
+  {% empty %}
+    <li class="list-group-item">No ingredients listed.</li>
+  {% endfor %}
+</ul>
+{% endblock %}
+
