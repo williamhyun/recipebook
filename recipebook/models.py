@@ -32,7 +32,7 @@ class Recipe(models.Model):
     minutes = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     difficulty = models.CharField(max_length=10, choices=Difficulty.choices, default=Difficulty.EASY)
 
-    # Many-to-many via a through table to store quantity
+    # many-to-many via a through table to store quantity
     ingredients = models.ManyToManyField(
         Ingredient,
         through="RecipeIngredient",
@@ -58,7 +58,6 @@ class RecipeIngredient(models.Model):
     Junction with payload: quantity per ingredient per recipe
     """
     class Unit(models.TextChoices):
-        # Keep the set small; you can expand later.
         GRAM = "g", "g"
         KILOGRAM = "kg", "kg"
         MILLILITER = "ml", "ml"
@@ -78,7 +77,7 @@ class RecipeIngredient(models.Model):
 
     class Meta:
         ordering = ["ingredient__name"]
-        # Prevent duplicate ingredient rows for the same recipe.
+        # prevent duplicate ingredient rows for the same recipe.
         constraints = [
             models.UniqueConstraint(fields=["recipe", "ingredient"], name="uniq_recipe_ingredient")
         ]
